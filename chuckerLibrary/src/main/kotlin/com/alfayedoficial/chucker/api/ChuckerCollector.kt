@@ -1,9 +1,7 @@
 package com.alfayedoficial.chucker.api
 
-import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.net.Uri
-import com.alfayedoficial.chucker.Copier.copy
 import com.alfayedoficial.chucker.HttpCall
 import com.alfayedoficial.chucker.R
 import com.alfayedoficial.chucker.internal.data.entity.HttpTransaction
@@ -91,14 +89,14 @@ public class ChuckerCollector @JvmOverloads constructor(
 
             if (showNotification) {
                 when {
-                    (transaction.status === HttpTransaction.Status.Failed || transaction.status === HttpTransaction.Status.Requested
-                            || transaction.responseCode!! >= HttpsURLConnection.HTTP_INTERNAL_ERROR || transaction.responseCode!! >= HttpsURLConnection.HTTP_BAD_REQUEST
+                    (transaction.status === HttpTransaction.Status.Failed
+                            || transaction.status === HttpTransaction.Status.Requested
+                            || transaction.responseCode!! >= HttpsURLConnection.HTTP_INTERNAL_ERROR
+                            || transaction.responseCode!! >= HttpsURLConnection.HTTP_BAD_REQUEST
                             || transaction.responseCode!! >= HttpsURLConnection.HTTP_MULT_CHOICE)
                     -> {
-                        MainScope().launch {
-                            val httpCall = HttpCall()
-                            copy(transaction, httpCall)
-                            requestCallback(httpCall)
+                        MainScope().launch(Dispatchers.Main) {
+                            requestCallback(mapHttpCallDtoToHttpCall(transaction))
                         }
                     }
                 }
@@ -151,5 +149,41 @@ public class ChuckerCollector @JvmOverloads constructor(
             fileName = "api_transactions.${exportFormat.extension}",
         )
     }
+
+    internal fun mapHttpCallDtoToHttpCall(httpDto: HttpTransaction): HttpCall {
+        return HttpCall(
+            id = httpDto.id,
+            requestDate = httpDto.requestDate,
+            responseDate = httpDto.responseDate,
+            tookMs = httpDto.tookMs,
+            protocol = httpDto.protocol,
+            method = httpDto.method,
+            url = httpDto.url,
+            host = httpDto.host,
+            path = httpDto.path,
+            scheme = httpDto.scheme,
+            responseTlsVersion = httpDto.responseTlsVersion,
+            responseCipherSuite = httpDto.responseCipherSuite,
+            requestPayloadSize = httpDto.requestPayloadSize,
+            requestContentType = httpDto.requestContentType,
+            requestHeaders = httpDto.requestHeaders,
+            requestHeadersSize = httpDto.requestHeadersSize,
+            requestBody = httpDto.requestBody,
+            isRequestBodyEncoded = httpDto.isRequestBodyEncoded,
+            responseCode = httpDto.responseCode,
+            responseMessage = httpDto.responseMessage,
+            error = httpDto.error,
+            responsePayloadSize = httpDto.responsePayloadSize,
+            responseContentType = httpDto.responseContentType,
+            responseHeaders = httpDto.responseHeaders,
+            responseHeadersSize = httpDto.responseHeadersSize,
+            responseBody = httpDto.responseBody,
+            isResponseBodyEncoded = httpDto.isResponseBodyEncoded,
+            responseImageData = httpDto.responseImageData,
+            graphQlDetected = httpDto.graphQlDetected,
+            graphQlOperationName = httpDto.graphQlOperationName
+        )
+    }
+
 
 }
