@@ -1,0 +1,1 @@
+-keep class com.alfayedoficial.chucker.internal.data.entity.HttpTransaction { *; }
