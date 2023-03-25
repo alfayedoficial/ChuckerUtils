@@ -1,7 +1,10 @@
 package com.alfayedoficial.chucker.api
 
+import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.net.Uri
+import com.alfayedoficial.chucker.Copier.copy
+import com.alfayedoficial.chucker.HttpCall
 import com.alfayedoficial.chucker.R
 import com.alfayedoficial.chucker.internal.data.entity.HttpTransaction
 import com.alfayedoficial.chucker.internal.data.har.log.Creator
@@ -16,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.net.ssl.HttpsURLConnection
 
 /**
  * The collector responsible of collecting data from a [ChuckerInterceptor] and
@@ -39,6 +43,7 @@ public class ChuckerCollector @JvmOverloads constructor(
 
     public companion object{
         private var showNotification: Boolean = false
+        public var requestCallback :(HttpCall) -> Unit = { _ -> }
 
         public fun setChuckerNotification(status:Boolean){
             showNotification = status
@@ -80,6 +85,20 @@ public class ChuckerCollector @JvmOverloads constructor(
             }
             if (showNotification && updated > 0) {
                 notificationHelper.show(transaction)
+            }
+
+            if (showNotification) {
+                when {
+                    (transaction.status === HttpTransaction.Status.Failed || transaction.status === HttpTransaction.Status.Requested
+                            || transaction.responseCode!! >= HttpsURLConnection.HTTP_INTERNAL_ERROR || transaction.responseCode!! >= HttpsURLConnection.HTTP_BAD_REQUEST
+                            || transaction.responseCode!! >= HttpsURLConnection.HTTP_MULT_CHOICE)
+                    -> {
+                        val httpCall = HttpCall()
+                        copy(transaction, httpCall)
+                        requestCallback(httpCall)
+                    }
+                }
+
             }
         }
     }
