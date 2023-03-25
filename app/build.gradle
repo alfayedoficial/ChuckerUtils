@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.chuckerutils'
+    namespace 'com.alfayedoficial.chuckerutils'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.chuckerutils"
+        applicationId "com.alfayedoficial.chuckerutils"
         minSdk 24
         targetSdk 33
         versionCode 1
