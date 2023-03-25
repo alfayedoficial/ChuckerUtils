@@ -48,6 +48,8 @@ public class ChuckerCollector @JvmOverloads constructor(
         public fun setChuckerNotification(status:Boolean){
             showNotification = status
         }
+
+        public fun getNotificationStatus():Boolean = showNotification
     }
 
     init {
