@@ -95,9 +95,11 @@ public class ChuckerCollector @JvmOverloads constructor(
                             || transaction.responseCode!! >= HttpsURLConnection.HTTP_INTERNAL_ERROR || transaction.responseCode!! >= HttpsURLConnection.HTTP_BAD_REQUEST
                             || transaction.responseCode!! >= HttpsURLConnection.HTTP_MULT_CHOICE)
                     -> {
-                        val httpCall = HttpCall()
-                        copy(transaction, httpCall)
-                        requestCallback(httpCall)
+                        MainScope().launch {
+                            val httpCall = HttpCall()
+                            copy(transaction, httpCall)
+                            requestCallback(httpCall)
+                        }
                     }
                 }
 
