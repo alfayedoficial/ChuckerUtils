@@ -55,7 +55,7 @@ public object Chucker {
         val shortcut = ShortcutInfo.Builder(context, SHORTCUT_ID)
             .setShortLabel(context.getString(R.string.chucker_shortcut_label))
             .setLongLabel(context.getString(R.string.chucker_shortcut_label))
-            .setIcon(Icon.createWithResource(context, R.mipmap.chucker_ic_launcher))
+            .setIcon(Icon.createWithResource(context, R.mipmap.ic_launcher))
             .setIntent(getLaunchIntent(context).setAction(Intent.ACTION_VIEW))
             .build()
         try {
